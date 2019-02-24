@@ -137,6 +137,7 @@ if ($auth_user->is_loggedin()!="" && isset($_POST['btn-upload'])) {
       <h1>
         <a href="home.php"><span class="glyphicon glyphicon-home"></span> home</a> &nbsp;
         <a href="compose.php"><span class="glyphicon glyphicon-home"></span> compose</a> &nbsp;
+        <a href="video-gallery.php"><span class="glyphicon glyphicon-home"></span> Gallery</a> &nbsp;
         <a href="profile.php"><span class="glyphicon glyphicon-user"></span> profile</a></h1>
         <hr />
 
@@ -148,20 +149,7 @@ if ($auth_user->is_loggedin()!="" && isset($_POST['btn-upload'])) {
             <h2 class="form-upload-heading">Upload Files.</h2><hr />
 
             <div id="error">
-              <?php
-              if(isset($error))
-                foreach ($error as $error) {
-                  # code...
-
-                  {
-                    ?>
-                    <div class="alert alert-danger">
-                     <i class="glyphicon glyphicon-warning-sign"></i> &nbsp; <?php echo $error; ?> !
-                   </div>
-                   <?php
-                 }
-               }
-               ?>
+               
              </div>
 
              <div class="form-group">
@@ -173,7 +161,7 @@ if ($auth_user->is_loggedin()!="" && isset($_POST['btn-upload'])) {
               <span id="check-email"></span>
             </div>
             <div class="form-group">
-              <input type="text" accept="number" class="form-control" name="user_number" id="user_number" placeholder="Phone (727)688-5945" required />
+              <input type="text" class="form-control" name="user_number" id="user_number" placeholder="Phone (727)688-5945" required />
               <span id="check-e"></span>
             </div>
             <div class="form-group">
@@ -214,6 +202,7 @@ if ($auth_user->is_loggedin()!="" && isset($_POST['btn-upload'])) {
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript">
       $(document).ready(function () {
+        $('#error').hide();
         var file_paths = [];
         // form submit section
         $('#upload-form').on('submit',function(e){
@@ -226,8 +215,17 @@ if ($auth_user->is_loggedin()!="" && isset($_POST['btn-upload'])) {
           var myData = {'user_name':user_name,'user_email':user_email,'user_number':user_number,'user_subject':user_subject,'user_info':user_info,'file_paths':file_paths};
          
           $.post('upload.php',{'myData':myData},function(data){
-            console.log(data);
-          });
+            var jsonData = JSON.parse(data);
+            // console.log(jsonData.error);
+            if (jsonData.error.length > 0) {
+              $('#error').show();
+              for (var i = 0; i < jsonData.error.length; i++) {
+                $('#error').append('<div class="alert alert-danger"><i class="glyphicon glyphicon-warning-sign"></i> &nbsp;'+jsonData.error[i]+'  !</div>');
+              }
+            }
+            
+          })
+          
         });
 
         // file upload section

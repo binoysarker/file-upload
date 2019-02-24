@@ -61,6 +61,29 @@ class USER
 		}
 	}
 
+	public function insertJsonData($uname,$uemail,$unumber,$usubject,$uinfo,$upath)
+	{
+		try
+		{
+
+			$stmt = $this->conn->prepare("INSERT INTO upload_info(user_name,user_email,user_number,user_subject,user_info,file_path) VALUES(:uname,:uemail,:unumber,:usubject,:uinfo,:upath)");
+              $stmt->bindparam(':uname',$uname);
+              $stmt->bindparam(':uemail',$uemail);
+              $stmt->bindparam(':unumber',$unumber);
+              $stmt->bindparam(':usubject',$usubject);
+              $stmt->bindparam(':uinfo',$uinfo);
+              $stmt->bindparam(':upath',$upath);
+
+              $stmt->execute();
+
+			return $stmt;
+		}
+		catch(PDOException $e)
+		{
+			echo $e->getMessage();
+		}
+	}
+
 
 	public function doLogin($uname,$umail,$upass)
 	{

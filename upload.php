@@ -20,6 +20,7 @@ $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
  */
 
 
+  $error = ['error'=>[]];
 if ($auth_user->is_loggedin()!="" && isset($_POST['myData'])) {
   // code...
   $uname = strip_tags($_POST['myData']['user_name']);
@@ -27,34 +28,48 @@ if ($auth_user->is_loggedin()!="" && isset($_POST['myData'])) {
   $unumber = strip_tags($_POST['myData']['user_number']);
   $usubject = strip_tags($_POST['myData']['user_subject']);
   $uinfo = strip_tags($_POST['myData']['user_info']);
-  $upaths = $_POST['myData']['file_paths'];
+  if (isset($_POST['myData']['file_paths'])) {
+    $upaths = $_POST['myData']['file_paths'];
+  }else{
+    array_push($error['error'],'please select a file !');
+  }
   
   $json = $_POST ['myData']['user_name'];
-  var_dump($uname,$uemail,$unumber,$usubject,$uinfo,$upaths);
-  exit();
+  // var_dump($uname,$uemail,$unumber,$usubject,$uinfo,$upaths);
+  // exit();
   if (empty($uname)) {
-    $error[] = 'provide user name !';
+    array_push($error['error'],'provide user name !');
   }
   else if (!preg_match("/^[a-zA-Z0-9 ]*$/",$uname)) {
-    $error[] = "user name should have letters and white space";
+    array_push($error['error'],"user name should have letters and white space");
   }
   else if (empty($uemail)) {
-    $error[] = 'provide user email !';
+    array_push($error['error'],'provide user email !');
   }
   else if (!filter_var($uemail, FILTER_VALIDATE_EMAIL)) {
-    $error[] = "Invalid email format";
+    array_push($error['error'],"Invalid email format");
   }
   else if (empty($unumber)) {
-    $error[] = 'provide phone number !';
+    array_push($error['error'],'provide phone number !');
   }
   else if(!preg_match("/^\([0-9]{3}\)[0-9]{3}-[0-9]{3}$/", $unumber)) {
-    $error[] = 'Invalid phone number !';
+    array_push($error['error'],'Invalid phone number !');
   }
   else if (empty($usubject)) {
-    $error[] = 'provide subject !';
+    array_push($error['error'],'provide subject !');
   }
   else if (empty($uinfo)) {
-    $error[] = 'provide file information !';
+    array_push($error['error'],'provide file information !');
+    
+  }
+
+  echo json_encode($error);
+
+  // now insert the json data in the database
+  if (isset($upaths)) {
+    foreach ($upaths as $path) {
+      $auth_user->insertJsonData($uname,$uemail,$unumber,$usubject,$uinfo,$path);
+    }
   }
 }
 else {
@@ -66,7 +81,7 @@ else {
     $_SESSION['file_number'] = $total;
 
     if (empty($_FILES['file_upload']['name'])) {
-      $error[] = 'please select file !';
+      array_push($error['error'],'please select file !');
     }
 
     else{
@@ -83,8 +98,8 @@ else {
               // var_dump($newFilePath);
               //Handle other code here
               // store in the databse
-            $result = $auth_user->uploadFile($newFilePath);
-          // var_dump($result);
+            $auth_user->uploadFile($newFilePath);
+          
 
           }
         }
@@ -97,6 +112,8 @@ else {
       echo json_encode($userRow);
     }
   }
+
+  echo json_encode($error);
 }
 
 ?>

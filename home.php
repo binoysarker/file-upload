@@ -136,7 +136,8 @@ if ($auth_user->is_loggedin()!="" && isset($_POST['btn-upload'])) {
 
       <h1>
         <a href="home.php"><span class="glyphicon glyphicon-home"></span> home</a> &nbsp; 
-        <a href="compose.php"><span class="glyphicon glyphicon-home"></span> compose</a> &nbsp; 
+        <a href="compose.php"><span class="glyphicon glyphicon-home"></span> compose</a> &nbsp;
+        <a href="video-gallery.php"><span class="glyphicon glyphicon-home"></span> Gallery</a> &nbsp; 
         <a href="profile.php"><span class="glyphicon glyphicon-user"></span> profile</a></h1>
         <hr />
         
