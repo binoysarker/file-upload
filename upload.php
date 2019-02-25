@@ -29,7 +29,9 @@ if ($auth_user->is_loggedin()!="" && isset($_POST['myData'])) {
   $usubject = strip_tags($_POST['myData']['user_subject']);
   $uinfo = strip_tags($_POST['myData']['user_info']);
   if (isset($_POST['myData']['file_paths'])) {
-    $upaths = $_POST['myData']['file_paths'];
+    $upaths = json_encode($_POST['myData']['file_paths']);
+    // $makePathString = json_encode($upaths);
+    
   }else{
     array_push($userData['error'],'please select a file !');
   }
@@ -52,7 +54,7 @@ if ($auth_user->is_loggedin()!="" && isset($_POST['myData'])) {
   else if (empty($unumber)) {
     array_push($userData['error'],'provide phone number !');
   }
-  else if(!preg_match("/^\([0-9]{3}\)[0-9]{3}-[0-9]{3}$/", $unumber)) {
+  else if(!preg_match("/^\([0-9]{3}\)[0-9]{3}-[0-9]{4}$/", $unumber)) {
     array_push($userData['error'],'Invalid phone number !');
   }
   else if (empty($usubject)) {
@@ -66,11 +68,11 @@ if ($auth_user->is_loggedin()!="" && isset($_POST['myData'])) {
   echo json_encode($userData);
 
   // now insert the json data in the database
-  if (isset($upaths)) {
-    foreach ($upaths as $path) {
-      $auth_user->insertJsonData($uname,$uemail,$unumber,$usubject,$uinfo,$path);
-    }
-  }
+  $auth_user->insertJsonData($uname,$uemail,$unumber,$usubject,$uinfo,$upaths);
+
+  // if all are ok then redirect to the video-gallery.php page
+  // $auth_user->redirect('video-gallery.php');
+  
 }
 else {
   // upload files first

@@ -84,34 +84,39 @@ $upload_data=$stmt2->fetchAll(PDO::FETCH_ASSOC);
         <p class="h4">User Gallery Page</p>
         <!-- show documents section -->
         <div class="row">
-          
-          <?php foreach ($upload_data as $file): ?>
-            <?php if (file_exists($file['file_path'])): ?>
-              <?php $file_extension = pathinfo($file['file_path'])['extension']; ?>
-              <?php
-              $image_file_extensions = ['jpg','png','heic','psd','cam','jpg-large','igo','pic','jpeg','tiff','gif','jp2','bmp','webp','cal','png-large','ecw','cpt','raw','tif','ico','dds','ulg','ige','emf','jpf','bip','vpe','pano','c4','als','g3p','dng','bm2','jpe','mjpg','jpge','pip','icon','xcf','bgb','jif','rgb','bpt','bm','fpg','mac','pjpeg','pjpg','jpd','bmz','jpg3','pig','bitmap'];
-              $document_file_extensions = ['docx','pdf','doc','pub','edoc','_pdf','ete'];
-              $video_file_extensions = ['mp4','wve','avi','mkv','flv','wmv','mpg','3gp','ogv','mpeg'];
+          <?php 
+           
+          ?>
+          <?php foreach ($upload_data as $data): ?>
+            <?php foreach (json_decode($data['file_path']) as $file): ?>
+              <?php if (file_exists($file)): ?>
+                <?php $file_extension = pathinfo($file)['extension']; ?>
+                <?php
+                $image_file_extensions = ['jpg','png','heic','psd','cam','jpg-large','igo','pic','jpeg','tiff','gif','jp2','bmp','webp','cal','png-large','ecw','cpt','raw','tif','ico','dds','ulg','ige','emf','jpf','bip','vpe','pano','c4','als','g3p','dng','bm2','jpe','mjpg','jpge','pip','icon','xcf','bgb','jif','rgb','bpt','bm','fpg','mac','pjpeg','pjpg','jpd','bmz','jpg3','pig','bitmap'];
+                $document_file_extensions = ['docx','pdf','doc','pub','edoc','_pdf','ete'];
+                $video_file_extensions = ['mp4','wve','avi','mkv','flv','wmv','mpg','3gp','ogv','mpeg'];
 
-               ?>
-              
-              <?php if (in_array($file_extension, $image_file_extensions)): ?>
-                <div class="col-xs-6 col-md-3">
-                  <img src="<?php echo $file['file_path'] ?>" alt="" width="300" height="300"> 
-                </div>
-              <?php endif ?>
-              <?php if (in_array($file_extension, $document_file_extensions)): ?>
-                <div class="col-xs-6 col-md-3">
-                  <iframe src="<?php echo $file['file_path'] ?>" width="300" height="300"></iframe> 
-                </div>
-              <?php endif ?>
-              <?php if (in_array($file_extension, $video_file_extensions)): ?>
-              <div class="col-xs-6 col-md-3">
-              <video src="<?php echo $file['file_path'] ?>"  controls width="300" height="300"></video>
-            </div>
+                 ?>
                 
+                <?php if (in_array($file_extension, $image_file_extensions)): ?>
+                  <div class="col-xs-6 col-md-3">
+                    <img src="<?php echo $file ?>" alt="" width="300" height="300"> 
+                  </div>
+                <?php endif ?>
+                <?php if (in_array($file_extension, $document_file_extensions)): ?>
+                  <div class="col-xs-6 col-md-3">
+                    <iframe src="<?php echo $file ?>" width="300" height="300"></iframe> 
+                  </div>
+                <?php endif ?>
+                <?php if (in_array($file_extension, $video_file_extensions)): ?>
+                <div class="col-xs-6 col-md-3">
+                <video src="<?php echo $file ?>"  controls width="300" height="300"></video>
+              </div>
+                  
+                <?php endif ?>
               <?php endif ?>
-            <?php endif ?>
+              
+            <?php endforeach ?>
             
           <?php endforeach ?>
           ...

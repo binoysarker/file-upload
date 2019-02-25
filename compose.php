@@ -14,69 +14,6 @@ $stmt->execute(array(":user_id"=>$user_id));
 $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
 
 
-
-/**
- * working with the upload data
- */
-if ($auth_user->is_loggedin()!="" && isset($_POST['btn-upload'])) {
-  $uname = strip_tags($_POST['user_name']);
-  $uemail = strip_tags($_POST['user_email']);
-  $unumber = strip_tags($_POST['user_number']);
-  $usubject = strip_tags($_POST['user_subject']);
-  $uinfo = strip_tags($_POST['user_info']);
-  // Count # of uploaded files in array
-  $total = count($_FILES['file_upload']['name']);
-  // var_dump($uname,$uemail,$unumber,$usubject,$uinfo);
-
-  if (empty($uname)) {
-    $error[] = 'provide user name !';
-  }
-  else if (!preg_match("/^[a-zA-Z0-9 ]*$/",$uname)) {
-    $error[] = "user name should have letters and white space";
-  }
-  else if (empty($uemail)) {
-    $error[] = 'provide user email !';
-  }
-  else if (!filter_var($uemail, FILTER_VALIDATE_EMAIL)) {
-    $error[] = "Invalid email format";
-  }
-  else if (empty($unumber)) {
-    $error[] = 'provide phone number !';
-  }
-  else if(!preg_match("/^\([0-9]{3}\)[0-9]{3}-[0-9]{3}$/", $unumber)) {
-    $error[] = 'Invalid phone number !';
-  }
-  else if (empty($usubject)) {
-    $error[] = 'provide subject !';
-  }
-  else if (empty($uinfo)) {
-    $error[] = 'provide file information !';
-  }
-  else if (empty($_FILES['file_upload']['name'])) {
-    $error[] = 'please select file !';
-  }
-
-  else{
-    for( $i=0 ; $i < $total ; $i++ ) {
-
-      $tmpFilePath = $_FILES['file_upload']['tmp_name'][$i];
-
-      if ($tmpFilePath != ""){
-        $newFilePath = "./uploadFiles/" . $_FILES['file_upload']['name'][$i];
-
-        if(move_uploaded_file($tmpFilePath, $newFilePath)) {
-              // var_dump($newFilePath);
-              //Handle other code here
-              // store in the databse
-          $result = $auth_user->uploadFile($uname,$uemail,$unumber,$usubject,$uinfo,$newFilePath);
-          var_dump($result);
-        }
-      }
-    }
-    $auth_user->redirect('video-gallery.php');
-  }
-}
-
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -215,13 +152,15 @@ if ($auth_user->is_loggedin()!="" && isset($_POST['btn-upload'])) {
           var myData = {'user_name':user_name,'user_email':user_email,'user_number':user_number,'user_subject':user_subject,'user_info':user_info,'file_paths':file_paths};
          
           $.post('upload.php',{'myData':myData},function(data){
+            console.log(data);
             var jsonData = JSON.parse(data);
-            // console.log(jsonData.error);
             if (jsonData.error.length > 0) {
               $('#error').show();
               for (var i = 0; i < jsonData.error.length; i++) {
                 $('#error').append('<div class="alert alert-danger"><i class="glyphicon glyphicon-warning-sign"></i> &nbsp;'+jsonData.error[i]+'  !</div>');
               }
+            }else{
+              location.assign('http://localhost/Login-Signup-PDO-OOP/video-gallery.php');
             }
             
           })
