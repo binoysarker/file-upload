@@ -240,12 +240,14 @@ if ($auth_user->is_loggedin()!="" && isset($_POST['btn-upload'])) {
                 return myXhr;
             },
             success: function (data) {
+              // console.log(typeof(data));
                 // alert("Data Uploaded: "+data);
                 // console.log(typeof(JSON.parse(data)));
                 var jsonData = JSON.parse(data);
-                for (var key in jsonData) {
-                  $('#show_files').append('<h6>'+jsonData[key].upload_path.replace('./uploadFiles/', '')+'</h6>');
-                  file_paths.push(jsonData[key].upload_path);
+                // console.log(jsonData.data);
+                for (var key in jsonData.data) {
+                  $('#show_files').append('<h6>'+jsonData.data[key].upload_path.replace('./uploadFiles/', '')+'</h6>');
+                  file_paths.push(jsonData.data[key].upload_path);
                 }
 
             },

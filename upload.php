@@ -20,7 +20,7 @@ $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
  */
 
 
-  $error = ['error'=>[]];
+  $userData = ['error'=>[],'data'=>[]];
 if ($auth_user->is_loggedin()!="" && isset($_POST['myData'])) {
   // code...
   $uname = strip_tags($_POST['myData']['user_name']);
@@ -31,39 +31,39 @@ if ($auth_user->is_loggedin()!="" && isset($_POST['myData'])) {
   if (isset($_POST['myData']['file_paths'])) {
     $upaths = $_POST['myData']['file_paths'];
   }else{
-    array_push($error['error'],'please select a file !');
+    array_push($userData['error'],'please select a file !');
   }
   
   $json = $_POST ['myData']['user_name'];
   // var_dump($uname,$uemail,$unumber,$usubject,$uinfo,$upaths);
   // exit();
   if (empty($uname)) {
-    array_push($error['error'],'provide user name !');
+    array_push($userData['error'],'provide user name !');
   }
   else if (!preg_match("/^[a-zA-Z0-9 ]*$/",$uname)) {
-    array_push($error['error'],"user name should have letters and white space");
+    array_push($userData['error'],"user name should have letters and white space");
   }
   else if (empty($uemail)) {
-    array_push($error['error'],'provide user email !');
+    array_push($userData['error'],'provide user email !');
   }
   else if (!filter_var($uemail, FILTER_VALIDATE_EMAIL)) {
-    array_push($error['error'],"Invalid email format");
+    array_push($userData['error'],"Invalid email format");
   }
   else if (empty($unumber)) {
-    array_push($error['error'],'provide phone number !');
+    array_push($userData['error'],'provide phone number !');
   }
   else if(!preg_match("/^\([0-9]{3}\)[0-9]{3}-[0-9]{3}$/", $unumber)) {
-    array_push($error['error'],'Invalid phone number !');
+    array_push($userData['error'],'Invalid phone number !');
   }
   else if (empty($usubject)) {
-    array_push($error['error'],'provide subject !');
+    array_push($userData['error'],'provide subject !');
   }
   else if (empty($uinfo)) {
-    array_push($error['error'],'provide file information !');
+    array_push($userData['error'],'provide file information !');
     
   }
 
-  echo json_encode($error);
+  echo json_encode($userData);
 
   // now insert the json data in the database
   if (isset($upaths)) {
@@ -81,7 +81,7 @@ else {
     $_SESSION['file_number'] = $total;
 
     if (empty($_FILES['file_upload']['name'])) {
-      array_push($error['error'],'please select file !');
+      array_push($userData['error'],'please select file !');
     }
 
     else{
@@ -108,12 +108,11 @@ else {
       $stmt = $auth_user->runQuery("SELECT * FROM uploads ORDER BY id DESC LIMIT ".$total);
       $stmt->execute();
 
-      $userRow=$stmt->fetchAll(PDO::FETCH_ASSOC);
-      echo json_encode($userRow);
+      $userData['data']=$stmt->fetchAll(PDO::FETCH_ASSOC);
+      echo json_encode($userData);
     }
   }
 
-  echo json_encode($error);
 }
 
 ?>
