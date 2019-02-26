@@ -82,8 +82,15 @@ $upload_data=$stmt2->fetchAll(PDO::FETCH_ASSOC);
         <hr />
         
         <p class="h4">User Gallery Page</p>
+        <form class="navbar-form navbar-left" role="search" id="search-form">
+          <div class="form-group">
+            <input type="text" id="search-input" class="form-control" placeholder="Search">
+          </div>
+          <button type="submit" class="btn btn-default" id="search-button">Submit</button>
+        </form>
+        <div class="clearfix"></div>
         <!-- show documents section -->
-        <div class="row">
+        <div class="row" id="gallery_content">
           <?php 
            
           ?>
@@ -132,8 +139,51 @@ $upload_data=$stmt2->fetchAll(PDO::FETCH_ASSOC);
 
 
     </div>
-
+    <script type="text/javascript" src="jquery-1.11.3-jquery.min.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        
+        $('#search-form').on('submit',function (e) {
+          e.preventDefault();
+          var inputValue = $('#search-input').val();
+          // console.log(e.keyCode);
+          $.post('search.php',{'searchValue':inputValue},function (data) {
+            // console.log(data);
+            
+            var jsonData = JSON.parse(data);
+            // console.log(jsonData);
+            var image_file_extensions = ['jpg','png','heic','psd','cam','jpg-large','igo','pic','jpeg','tiff','gif','jp2','bmp','webp','cal','png-large','ecw','cpt','raw','tif','ico','dds','ulg','ige','emf','jpf','bip','vpe','pano','c4','als','g3p','dng','bm2','jpe','mjpg','jpge','pip','icon','xcf','bgb','jif','rgb','bpt','bm','fpg','mac','pjpeg','pjpg','jpd','bmz','jpg3','pig','bitmap'];
+            var document_file_extensions = ['docx','pdf','doc','pub','edoc','_pdf','ete'];
+            var video_file_extensions = ['mp4','wve','avi','mkv','flv','wmv','mpg','3gp','ogv','mpeg'];
 
+
+            $('#gallery_content').html('');
+            for(var id in jsonData){
+              var file_path = jsonData[id];
+              var n = file_path.lastIndexOf('.');
+              var extension = file_path.substring(n+1);
+              // console.log(extension);
+              
+              if (image_file_extensions.includes(extension)) {
+                // console.log('image ' , id,file_path);
+                $('#gallery_content').append('<div class="col-xs-6 col-md-3"><img src="'+file_path+'" alt="" width="300" height="300" data-id="'+id+'"> </div>');
+              }
+              if(document_file_extensions.includes(extension)){
+                // console.log('document ' , id,file_path);
+                // $('#gallery_content').html('');
+                $('#gallery_content').append('<div class="col-xs-6 col-md-3"><iframe src="'+file_path+'" width="300" height="300" data-id="'+id+'"></iframe></div>');
+              }
+              if(video_file_extensions.includes(extension)){
+                // console.log('video ' , id,file_path);
+                // $('#gallery_content').html('');
+                $('#gallery_content').append('<div class="col-xs-6 col-md-3"><video src="'+file_path+'"  controls width="300" height="300" data-id="'+id+'"></video></div>');
+              }
+            }
+            
+          });
+        })
+      });
+    </script>
   </body>
   </html>

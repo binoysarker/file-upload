@@ -61,6 +61,24 @@ class USER
 		}
 	}
 
+	public function getAllInfo()
+	{
+		try
+		{
+
+			$stmt = $this->conn->prepare("SELECT * FROM upload_info ");
+              $stmt->execute();
+
+              $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+			return $result;
+		}
+		catch(PDOException $e)
+		{
+			echo $e->getMessage();
+		}
+	}
+
 	public function insertJsonData($uname,$uemail,$unumber,$usubject,$uinfo,$upath)
 	{
 		try
